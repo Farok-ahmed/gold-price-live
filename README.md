@@ -142,12 +142,25 @@ Interactive calculator to estimate scrap metal value based on weight and purity.
 
 1. Upload the `gold-price-lived` folder to `/wp-content/plugins/`
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Use shortcodes in any page, post, or widget
+3. **Configure API Key**: Go to Settings > Gold Price Live and enter your API key
+4. Use shortcodes in any page, post, or widget
+
+## Configuration
+
+### Setting Up API Key
+
+1. After activation, navigate to **Settings > Gold Price Live** in your WordPress admin
+2. Enter your API key (get it from [goldprice.org](https://data-asg.goldprice.org))
+3. Click "Save Settings"
+4. The plugin will test the connection and display current gold price if successful
+
+**Note:** Without an API key, the shortcodes will display a message asking you to configure the key in settings.
 
 ## Requirements
 
 - WordPress 5.0 or higher
 - PHP 7.0 or higher
+- Valid API key from goldprice.org
 
 ## Author
 

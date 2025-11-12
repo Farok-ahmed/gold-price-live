@@ -28,7 +28,8 @@ define( 'GOLD_PRICE_LIVED_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
  * The code that runs during plugin activation.
  */
 function activate_gold_price_lived() {
-    // Add activation logic here
+    // Set activation notice flag
+    set_transient( 'gold_price_lived_activation_notice', true, 60 );
     flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'activate_gold_price_lived' );
@@ -37,10 +38,34 @@ register_activation_hook( __FILE__, 'activate_gold_price_lived' );
  * The code that runs during plugin deactivation.
  */
 function deactivate_gold_price_lived() {
-    // Add deactivation logic here
+    // Clear cache on deactivation
+    delete_transient( 'gold_price_lived_data' );
     flush_rewrite_rules();
 }
 register_deactivation_hook( __FILE__, 'deactivate_gold_price_lived' );
+
+/**
+ * Admin notice for activation
+ */
+function gold_price_lived_activation_notice() {
+    if ( get_transient( 'gold_price_lived_activation_notice' ) ) {
+        $api_key = get_option( 'gold_price_lived_api_key', '' );
+        
+        if ( empty( $api_key ) ) {
+            ?>
+            <div class="notice notice-info is-dismissible">
+                <p>
+                    <strong>Gold Price Live</strong> has been activated! 
+                    Please <a href="<?php echo admin_url( 'options-general.php?page=gold-price-lived-settings' ); ?>">configure your API key</a> to start displaying live prices.
+                </p>
+            </div>
+            <?php
+        }
+        
+        delete_transient( 'gold_price_lived_activation_notice' );
+    }
+}
+add_action( 'admin_notices', 'gold_price_lived_activation_notice' );
 
 /**
  * Initialize the plugin.
@@ -48,6 +73,11 @@ register_deactivation_hook( __FILE__, 'deactivate_gold_price_lived' );
 function gold_price_lived_init() {
     // Load plugin text domain for translations
     load_plugin_textdomain( 'gold-price-lived', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+    
+    // Include admin settings
+    if ( is_admin() ) {
+        require_once GOLD_PRICE_LIVED_PLUGIN_DIR . 'includes/class-admin-settings.php';
+    }
     
     // Include required files
     require_once GOLD_PRICE_LIVED_PLUGIN_DIR . 'includes/class-topbar.php';
@@ -62,6 +92,13 @@ add_action( 'plugins_loaded', 'gold_price_lived_init' );
  * Fetch gold prices from API
  */
 function gold_price_lived_fetch_prices() {
+    // Check if API key is configured
+    $api_key = get_option( 'gold_price_lived_api_key', '' );
+    
+    if ( empty( $api_key ) ) {
+        return false;
+    }
+    
     $api_url = 'https://data-asg.goldprice.org/dbXRates/USD';
     
     // Check for cached data (cache for 12 hours - fetches twice daily)
@@ -96,4 +133,3 @@ function gold_price_lived_fetch_prices() {
     
     return $data;
 }
-

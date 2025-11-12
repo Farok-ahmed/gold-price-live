@@ -55,7 +55,11 @@ class Gold_Price_Topbar {
         $data = $this->get_price_data();
         
         if ( ! $data ) {
-            return '<div class="gold-price-topbar error">Unable to fetch prices</div>';
+            $api_key = get_option( 'gold_price_lived_api_key', '' );
+            if ( empty( $api_key ) ) {
+                return '<div class="gold-price-topbar error">Please configure your API key in <a href="' . admin_url( 'options-general.php?page=gold-price-lived-settings' ) . '" style="color: #fff; text-decoration: underline;">Settings</a></div>';
+            }
+            return '<div class="gold-price-topbar error">Unable to fetch prices. Please check your API key.</div>';
         }
         
         // Extract prices
