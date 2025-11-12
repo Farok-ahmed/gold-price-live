@@ -86,17 +86,53 @@ class Gold_Price_Admin_Settings {
      */
     public function api_key_field_callback() {
         $api_key = get_option( 'gold_price_lived_api_key', '' );
+        $has_key = ! empty( $api_key );
         ?>
-        <input 
-            type="text" 
-            name="gold_price_lived_api_key" 
-            value="<?php echo esc_attr( $api_key ); ?>" 
-            class="regular-text" 
-            placeholder="<?php esc_attr_e( 'Enter your API key', 'gold-price-lived' ); ?>"
-        />
+        <div style="position: relative; display: inline-block;">
+            <input 
+                type="password" 
+                id="gold_price_api_key_input"
+                name="gold_price_lived_api_key" 
+                value="<?php echo esc_attr( $api_key ); ?>" 
+                class="regular-text" 
+                placeholder="<?php esc_attr_e( 'Enter your API key', 'gold-price-lived' ); ?>"
+                autocomplete="off"
+            />
+            <button 
+                type="button" 
+                id="toggle_api_key_visibility" 
+                class="button button-small"
+                style="margin-left: 5px; vertical-align: middle;"
+            >
+                <span class="dashicons dashicons-visibility" style="line-height: 1.4;"></span>
+            </button>
+        </div>
+        <?php if ( $has_key ) : ?>
+        <p class="description" style="color: #46b450;">
+            <span class="dashicons dashicons-yes-alt" style="vertical-align: middle;"></span>
+            <?php _e( 'API Key is configured (hidden for security)', 'gold-price-lived' ); ?>
+        </p>
+        <?php endif; ?>
         <p class="description">
             <?php _e( 'Get your API key from <a href="https://data-asg.goldprice.org" target="_blank">goldprice.org</a>', 'gold-price-lived' ); ?>
         </p>
+        
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('#toggle_api_key_visibility').on('click', function() {
+                var input = $('#gold_price_api_key_input');
+                var icon = $(this).find('.dashicons');
+                
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+                }
+            });
+        });
+        </script>
         <?php
     }
 
@@ -106,6 +142,28 @@ class Gold_Price_Admin_Settings {
     public function render_settings_page() {
         if ( ! current_user_can( 'manage_options' ) ) {
             return;
+        }
+
+        // Handle manual fetch
+        if ( isset( $_POST['fetch_now'] ) && check_admin_referer( 'gold_price_fetch_now', 'fetch_nonce' ) ) {
+            delete_transient( 'gold_price_lived_data' );
+            $fresh_data = gold_price_lived_fetch_prices();
+            
+            if ( $fresh_data ) {
+                add_settings_error(
+                    'gold_price_lived_messages',
+                    'gold_price_lived_fetch_success',
+                    __( 'Fresh data fetched successfully!', 'gold-price-lived' ),
+                    'updated'
+                );
+            } else {
+                add_settings_error(
+                    'gold_price_lived_messages',
+                    'gold_price_lived_fetch_error',
+                    __( 'Failed to fetch data. Please check your API key.', 'gold-price-lived' ),
+                    'error'
+                );
+            }
         }
 
         // Check if settings saved
@@ -151,6 +209,16 @@ class Gold_Price_Admin_Settings {
                 } else {
                     echo '<p style="color: #46b450;"><strong>' . __( 'API Key configured successfully!', 'gold-price-lived' ) . '</strong></p>';
                     
+                    // Check cache status
+                    $cached_data = get_transient( 'gold_price_lived_data' );
+                    $cache_timestamp = get_transient( 'gold_price_lived_cache_time' );
+                    
+                    if ( $cached_data && $cache_timestamp ) {
+                        $last_updated = human_time_diff( $cache_timestamp, current_time( 'timestamp' ) );
+                        echo '<p>' . __( 'Last Updated:', 'gold-price-lived' ) . ' <strong>' . $last_updated . ' ago</strong></p>';
+                        echo '<p>' . __( 'Next Update:', 'gold-price-lived' ) . ' <strong>' . __( 'Automatic (twice daily)', 'gold-price-lived' ) . '</strong></p>';
+                    }
+                    
                     // Test API connection
                     $test_data = gold_price_lived_fetch_prices();
                     if ( $test_data ) {
@@ -162,6 +230,20 @@ class Gold_Price_Admin_Settings {
                     } else {
                         echo '<p style="color: #dc3232;">' . __( 'API Connection: Failed. Please check your API key.', 'gold-price-lived' ) . '</p>';
                     }
+                    
+                    // Fetch Now button
+                    ?>
+                    <form method="post" style="margin-top: 20px;">
+                        <?php wp_nonce_field( 'gold_price_fetch_now', 'fetch_nonce' ); ?>
+                        <button type="submit" name="fetch_now" class="button button-secondary">
+                            <span class="dashicons dashicons-update" style="vertical-align: middle;"></span>
+                            <?php _e( 'Fetch Now', 'gold-price-lived' ); ?>
+                        </button>
+                        <p class="description">
+                            <?php _e( 'Click to fetch fresh data immediately and clear the cache.', 'gold-price-lived' ); ?>
+                        </p>
+                    </form>
+                    <?php
                 }
                 ?>
             </div>

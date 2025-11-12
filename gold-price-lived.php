@@ -131,5 +131,8 @@ function gold_price_lived_fetch_prices() {
     // Cache the data for 12 hours (twice daily updates)
     set_transient( $cache_key, $data, 12 * HOUR_IN_SECONDS );
     
+    // Store cache timestamp
+    set_transient( 'gold_price_lived_cache_time', current_time( 'timestamp' ), 12 * HOUR_IN_SECONDS );
+    
     return $data;
 }

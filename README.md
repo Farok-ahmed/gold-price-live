@@ -138,6 +138,10 @@ Interactive calculator to estimate scrap metal value based on weight and purity.
 - Silver (XAG)
 - Platinum (XPT)
 
+**Update Frequency:**
+- Automatic: Twice daily (12-hour cache)
+- Manual: Click "Fetch Now" button in settings anytime
+
 ## Installation
 
 1. Upload the `gold-price-lived` folder to `/wp-content/plugins/`
@@ -151,10 +155,36 @@ Interactive calculator to estimate scrap metal value based on weight and purity.
 
 1. After activation, navigate to **Settings > Gold Price Live** in your WordPress admin
 2. Enter your API key (get it from [goldprice.org](https://data-asg.goldprice.org))
+   - The API key field is a password field for security
+   - Click the eye icon (👁️) to toggle visibility if needed
+   - The key is hidden by default to protect your credentials
 3. Click "Save Settings"
 4. The plugin will test the connection and display current gold price if successful
+5. Once saved, the API key will be stored securely and hidden
+
+**Security Features:**
+- API key is displayed as password (hidden dots)
+- Toggle visibility button to show/hide the key when needed
+- Confirmation message when API key is configured
+- No plain text display in browser
 
 **Note:** Without an API key, the shortcodes will display a message asking you to configure the key in settings.
+
+### Manual Data Fetch
+
+By default, the plugin fetches data automatically twice daily (every 12 hours). If you need to update prices immediately:
+
+1. Go to **Settings > Gold Price Live**
+2. Scroll to the "Current Status" section
+3. Click the **"Fetch Now"** button
+4. Fresh data will be fetched immediately and cache will be cleared
+5. The "Last Updated" timestamp will show when data was last fetched
+
+This is useful when:
+- You need to display the most current prices immediately
+- Testing the API connection
+- After changing market conditions
+- Before important price displays
 
 ## Requirements
 
