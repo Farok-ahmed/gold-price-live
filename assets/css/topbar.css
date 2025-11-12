@@ -1,0 +1,134 @@
+/**
+ * Gold Price Live - Topbar Styles
+ */
+
+.gold-price-topbar {
+    background: linear-gradient(135deg, #01050c 0%, #2a5298 100%);
+    padding: 12px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.gold-price-topbar.error {
+    background: #dc3545;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.gold-price-container {
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    flex-wrap: wrap;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.gold-price-topbar  .gold-price-container{
+    margin: 0!important;
+}
+
+.price-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.price-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.price-item .metal-name {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.price-item .price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.price-item.gold .price {
+    color: #ffd700;
+}
+
+.price-item.silver .price {
+    color: #c0c0c0;
+}
+
+.price-item.platinum .price {
+    color: #e5e4e2;
+}
+
+.price-date-time {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 20px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.price-date-time .date {
+    font-weight: 500;
+}
+
+.price-date-time .time {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .gold-price-container {
+        gap: 15px;
+    }
+    
+    .price-item {
+        padding: 6px 15px;
+    }
+    
+    .price-item .metal-name {
+        font-size: 11px;
+    }
+    
+    .price-item .price {
+        font-size: 16px;
+    }
+    
+    .price-date-time {
+        border-left: none;
+        border-top: 2px solid rgba(255, 255, 255, 0.2);
+        padding-top: 10px;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .gold-price-topbar {
+        padding: 10px 15px;
+    }
+    
+    .gold-price-container {
+        gap: 10px;
+    }
+    
+    .price-item {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 120px;
+    }
+}

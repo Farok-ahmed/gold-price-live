@@ -1,0 +1,161 @@
+/**
+ * Gold Price Table Styles
+ */
+
+.gold-price-table-wrapper {
+    max-width: 800px;
+    margin: 30px auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.gold-price-table-error {
+    background: #dc3545;
+    color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.price-updated-info {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.spot-price-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+}
+
+.spot-price-title span.spot-word {
+    color: #0066cc;
+}
+
+.gold-price-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.gold-price-table thead {
+    background: #3d4f5d;
+}
+
+.gold-price-table thead th {
+    color: #fff;
+    padding: 15px 20px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+
+.gold-price-table thead th:last-child {
+    text-align: right;
+}
+
+.gold-price-table tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s ease;
+}
+
+.gold-price-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.gold-price-table tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+.gold-price-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.gold-price-table tbody td {
+    padding: 15px 20px;
+    font-size: 14px;
+}
+
+.gold-price-table tbody td.metal-name {
+    color: #495057;
+    font-weight: 500;
+}
+
+.gold-price-table tbody td.metal-price {
+    text-align: right;
+    font-weight: 700;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+.price-disclaimer {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-left: 4px solid #0066cc;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #666;
+    border-radius: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .gold-price-table-wrapper {
+        margin: 20px 10px;
+    }
+
+    .spot-price-title {
+        font-size: 20px;
+    }
+
+    .gold-price-table thead th,
+    .gold-price-table tbody td {
+        padding: 12px 15px;
+        font-size: 13px;
+    }
+
+    .gold-price-table tbody td.metal-price {
+        font-size: 15px;
+    }
+
+    .price-disclaimer {
+        font-size: 12px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .spot-price-title {
+        font-size: 18px;
+    }
+
+    .price-updated-info {
+        font-size: 12px;
+    }
+
+    .gold-price-table thead th,
+    .gold-price-table tbody td {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .gold-price-table tbody td.metal-price {
+        font-size: 14px;
+    }
+
+    .price-disclaimer {
+        font-size: 11px;
+        padding: 10px;
+    }
+}
