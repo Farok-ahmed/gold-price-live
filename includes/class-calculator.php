@@ -39,7 +39,7 @@ class Gold_Price_Calculator {
 
         // Enqueue calculator CSS
         wp_enqueue_style( 
-            'gold-price-calculator', 
+            'metal-price-calculator', 
             GOLD_PRICE_LIVED_PLUGIN_URL . 'assets/css/calculator.css', 
             array( 'nice-select' ), 
             GOLD_PRICE_LIVED_VERSION 
@@ -59,7 +59,7 @@ class Gold_Price_Calculator {
 
         // Enqueue calculator JS
         wp_enqueue_script( 
-            'gold-price-calculator', 
+            'metal-price-calculator', 
             GOLD_PRICE_LIVED_PLUGIN_URL . 'assets/js/calculator.js', 
             array( 'jquery', 'nice-select' ), 
             GOLD_PRICE_LIVED_VERSION, 
@@ -67,9 +67,9 @@ class Gold_Price_Calculator {
         );
 
         // Localize script
-        wp_localize_script( 'gold-price-calculator', 'goldPriceCalc', array(
+        wp_localize_script( 'metal-price-calculator', 'metalPriceCalc', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
-            'nonce' => wp_create_nonce( 'gold-price-calc-nonce' )
+            'nonce' => wp_create_nonce( 'metal-price-calc-nonce' )
         ) );
     }
 
@@ -91,7 +91,7 @@ class Gold_Price_Calculator {
      * AJAX handler for price calculation
      */
     public function ajax_calculate_price() {
-        check_ajax_referer( 'gold-price-calc-nonce', 'nonce' );
+        check_ajax_referer( 'metal-price-calc-nonce', 'nonce' );
 
         $metal = isset( $_POST['metal'] ) ? sanitize_text_field( $_POST['metal'] ) : 'gold';
         $purity = isset( $_POST['purity'] ) ? sanitize_text_field( $_POST['purity'] ) : '24';

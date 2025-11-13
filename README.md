@@ -1,4 +1,4 @@
-# Gold Price Live - WordPress Plugin
+# Metal Price Live - WordPress Plugin
 
 A professional WordPress plugin to display live gold, silver, and platinum prices with an interactive calculator.
 
@@ -15,8 +15,8 @@ A professional WordPress plugin to display live gold, silver, and platinum price
 ## File Structure
 
 ```
-gold-price-lived/
-├── gold-price-lived.php          # Main plugin file
+metal-price-live/
+├── metal-price-live.php          # Main plugin file
 ├── assets/
 │   ├── css/
 │   │   ├── topbar.css            # Topbar styles
@@ -144,20 +144,20 @@ Interactive calculator to estimate scrap metal value based on weight and purity.
 
 ## Installation
 
-1. Upload the `gold-price-lived` folder to `/wp-content/plugins/`
+1. Upload the `metal-price-live` folder to `/wp-content/plugins/`
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. **Configure API Key**: Go to Settings > Gold Price Live and enter your API key
+3. **Configure API URL**: Go to Metal Price Live menu in dashboard and enter your API URL
 4. Use shortcodes in any page, post, or widget
 
 ## Configuration
 
-### Setting Up API Key
+### Setting Up API URL
 
-1. After activation, navigate to **Settings > Gold Price Live** in your WordPress admin
-2. Enter your API key (get it from [goldprice.org](https://data-asg.goldprice.org))
-   - The API key field is a password field for security
+1. After activation, navigate to **Metal Price Live** menu in your WordPress admin dashboard
+2. Enter your API URL (get it from supported providers like goldprice.org, metalpriceapi.com, etc.)
+   - The API URL field is a password field for security
    - Click the eye icon (👁️) to toggle visibility if needed
-   - The key is hidden by default to protect your credentials
+   - The URL is hidden by default to protect your credentials
 3. Click "Save Settings"
 4. The plugin will test the connection and display current gold price if successful
 5. Once saved, the API key will be stored securely and hidden
@@ -168,13 +168,13 @@ Interactive calculator to estimate scrap metal value based on weight and purity.
 - Confirmation message when API key is configured
 - No plain text display in browser
 
-**Note:** Without an API key, the shortcodes will display a message asking you to configure the key in settings.
+**Note:** Without an API URL, the shortcodes will display a message asking you to configure it in settings.
 
 ### Manual Data Fetch
 
 By default, the plugin fetches data automatically twice daily (every 12 hours). If you need to update prices immediately:
 
-1. Go to **Settings > Gold Price Live**
+1. Go to **Metal Price Live** menu in dashboard
 2. Scroll to the "Current Status" section
 3. Click the **"Fetch Now"** button
 4. Fresh data will be fetched immediately and cache will be cleared

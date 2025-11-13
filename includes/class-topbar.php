@@ -28,7 +28,7 @@ class Gold_Price_Topbar {
      */
     public function enqueue_styles() {
         wp_enqueue_style( 
-            'gold-price-lived-topbar', 
+            'metal-price-live-topbar', 
             GOLD_PRICE_LIVED_PLUGIN_URL . 'assets/css/topbar.css', 
             array(), 
             GOLD_PRICE_LIVED_VERSION 
@@ -57,7 +57,7 @@ class Gold_Price_Topbar {
         if ( ! $data ) {
             $api_key = get_option( 'gold_price_lived_api_key', '' );
             if ( empty( $api_key ) ) {
-                return '<div class="gold-price-topbar error">Please configure your API URL in <a href="' . admin_url( 'options-general.php?page=gold-price-lived-settings' ) . '" style="color: #fff; text-decoration: underline;">Settings</a></div>';
+                return '<div class="gold-price-topbar error">Please configure your API URL in <a href="' . admin_url( 'options-general.php?page=metal-price-live-settings' ) . '" style="color: #fff; text-decoration: underline;">Settings</a></div>';
             }
             return '<div class="gold-price-topbar error">Unable to fetch prices. Please check your API URL.</div>';
         }

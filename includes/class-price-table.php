@@ -24,11 +24,11 @@ class Gold_Price_Table {
     }
 
     /**
-     * Enqueue table styles
+     * Enqueue price table styles
      */
     public function enqueue_styles() {
         wp_enqueue_style( 
-            'gold-price-lived-table', 
+            'metal-price-live-table', 
             GOLD_PRICE_LIVED_PLUGIN_URL . 'assets/css/price-table.css', 
             array(), 
             GOLD_PRICE_LIVED_VERSION 

@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name: Gold Price Live
- * Plugin URI: https://wordpress.org/plugins/gold-price-live/
+ * Plugin Name: Metal Price Live
+ * Plugin URI: https://wordpress.org/plugins/metal-price-live/
  * Description: A plugin to display live gold, silver, and platinum prices from multiple API providers (GoldPrice.org, MetalPriceAPI.com, Metals-API.com)
  * Version: 1.0.0
  * Author: Md Farok Ahmed
  * Author URI: https://farok.me
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: gold-price-lived
+ * Text Domain: metal-price-live
  * Domain Path: /languages
  */
 
@@ -55,8 +55,8 @@ function gold_price_lived_activation_notice() {
             ?>
             <div class="notice notice-info is-dismissible">
                 <p>
-                    <strong>Gold Price Live</strong> has been activated! 
-                    Please <a href="<?php echo admin_url( 'options-general.php?page=gold-price-lived-settings' ); ?>">configure your API URL</a> to start displaying live prices.
+                    <strong>Metal Price Live</strong> has been activated! 
+                    Please <a href="<?php echo admin_url( 'admin.php?page=metal-price-live-settings' ); ?>">configure your API URL</a> to start displaying live prices.
                 </p>
             </div>
             <?php
@@ -72,7 +72,7 @@ add_action( 'admin_notices', 'gold_price_lived_activation_notice' );
  */
 function gold_price_lived_init() {
     // Load plugin text domain for translations
-    load_plugin_textdomain( 'gold-price-lived', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+    load_plugin_textdomain( 'metal-price-live', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
     
     // Include admin settings
     if ( is_admin() ) {

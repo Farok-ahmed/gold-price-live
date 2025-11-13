@@ -90,11 +90,11 @@
 
             // AJAX request
             $.ajax({
-                url: goldPriceCalc.ajax_url,
+                url: metalPriceCalc.ajax_url,
                 type: 'POST',
                 data: {
                     action: 'calculate_scrap_metal_price',
-                    nonce: goldPriceCalc.nonce,
+                    nonce: metalPriceCalc.nonce,
                     metal: metal,
                     purity: purity,
                     weight: weight

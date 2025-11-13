@@ -24,11 +24,11 @@ class Gold_Price_Premium_Jewellery {
     }
 
     /**
-     * Enqueue jewellery table styles
+     * Enqueue premium jewellery styles
      */
     public function enqueue_styles() {
         wp_enqueue_style( 
-            'gold-price-lived-jewellery', 
+            'metal-price-live-jewellery', 
             GOLD_PRICE_LIVED_PLUGIN_URL . 'assets/css/premium-jewellery.css', 
             array(), 
             GOLD_PRICE_LIVED_VERSION 

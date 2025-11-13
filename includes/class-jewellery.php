@@ -28,7 +28,7 @@ class Gold_Price_Jewellery {
      */
     public function enqueue_styles() {
         wp_enqueue_style( 
-            'gold-price-lived-jewellery-full', 
+            'metal-price-live-jewellery-full', 
             GOLD_PRICE_LIVED_PLUGIN_URL . 'assets/css/jewellery.css', 
             array(), 
             GOLD_PRICE_LIVED_VERSION 

@@ -1,4 +1,4 @@
-=== Gold Price Live ===
+=== Metal Price Live ===
 Contributors: farokahmed
 Tags: gold price, silver price, platinum price, precious metals, live prices, calculator
 Requires at least: 5.0
@@ -12,7 +12,7 @@ Display live gold, silver, and platinum prices with interactive calculators. Sup
 
 == Description ==
 
-Gold Price Live is a comprehensive WordPress plugin that displays real-time precious metal prices from multiple API providers. Perfect for jewelers, precious metal dealers, investors, and financial websites.
+Metal Price Live is a comprehensive WordPress plugin that displays real-time precious metal prices from multiple API providers. Perfect for jewelers, precious metal dealers, investors, and financial websites.
 
 = Key Features =
 
@@ -51,7 +51,7 @@ USD, CAD, EUR, GBP, AUD, JPY, CHF, INR, CNY and more. Currency is automatically 
 = Usage =
 
 1. Install and activate the plugin
-2. Go to Settings → Gold Price Live
+2. Go to Metal Price Live menu in dashboard
 3. Enter your API URL from any supported provider
 4. Use shortcodes in posts, pages, or widgets
 5. Prices update automatically twice per day
@@ -70,7 +70,7 @@ USD, CAD, EUR, GBP, AUD, JPY, CHF, INR, CNY and more. Currency is automatically 
 
 1. Log in to your WordPress dashboard
 2. Navigate to Plugins → Add New
-3. Search for "Gold Price Live"
+3. Search for "Metal Price Live"
 4. Click "Install Now" and then "Activate"
 
 = Manual Installation =
@@ -82,7 +82,7 @@ USD, CAD, EUR, GBP, AUD, JPY, CHF, INR, CNY and more. Currency is automatically 
 
 = Configuration =
 
-1. Go to Settings → Gold Price Live
+1. Go to Metal Price Live menu in dashboard
 2. Enter your API URL from a supported provider
 3. The plugin will automatically detect the provider and currency
 4. Save settings and start using shortcodes
@@ -147,11 +147,11 @@ Yes! The plugin is fully internationalized and ready for translation into any la
 == Upgrade Notice ==
 
 = 1.0.0 =
-Initial release of Gold Price Live plugin.
+Initial release of Metal Price Live plugin.
 
 == Privacy Policy ==
 
-Gold Price Live does not collect, store, or share any personal data from your website visitors. The plugin only:
+Metal Price Live does not collect, store, or share any personal data from your website visitors. The plugin only:
 * Fetches precious metal price data from your configured API provider
 * Stores API responses in WordPress transient cache for 12 hours
 * Stores your API URL in WordPress options (admin only)
