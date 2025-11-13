@@ -68,6 +68,9 @@ class Gold_Price_Table {
         $silver_per_gram = $silver_price / 31.1035;
         $platinum_per_gram = $platinum_price / 31.1035;
 
+        // Get currency symbol
+        $currency_symbol = gold_price_lived_get_currency_symbol();
+
         // Get timestamp
         $timestamp = isset( $data['ts'] ) ? $data['ts'] : time() * 1000;
         $updated_time = date( 'n/j/Y g:i A', $timestamp / 1000 );
@@ -96,15 +99,15 @@ class Gold_Price_Table {
                 <tbody>
                     <tr>
                         <td class="metal-name">Gold price per gram</td>
-                        <td class="metal-price">$<?php echo number_format( $gold_per_gram, 2 ); ?>/g</td>
+                        <td class="metal-price"><?php echo esc_html( $currency_symbol . ' ' . number_format( $gold_per_gram, 2 ) . '/g' ); ?></td>
                     </tr>
                     <tr>
                         <td class="metal-name">Silver price per gram</td>
-                        <td class="metal-price">$<?php echo number_format( $silver_per_gram, 2 ); ?>/g</td>
+                        <td class="metal-price"><?php echo esc_html( $currency_symbol . ' ' . number_format( $silver_per_gram, 2 ) . '/g' ); ?></td>
                     </tr>
                     <tr>
                         <td class="metal-name">Platinum price per gram</td>
-                        <td class="metal-price">$<?php echo number_format( $platinum_per_gram, 2 ); ?>/g</td>
+                        <td class="metal-price"><?php echo esc_html( $currency_symbol . ' ' . number_format( $platinum_per_gram, 2 ) . '/g' ); ?></td>
                     </tr>
                 </tbody>
             </table>

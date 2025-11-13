@@ -133,12 +133,16 @@ class Gold_Price_Calculator {
 
         $total_value = $price_per_gram * $purity_percentage * $weight;
 
+        // Get currency symbol
+        $currency_symbol = gold_price_lived_get_currency_symbol();
+
         wp_send_json_success( array(
             'total' => number_format( $total_value, 2 ),
             'price_per_gram' => number_format( $price_per_gram * $purity_percentage, 2 ),
             'weight' => $weight,
             'metal' => ucfirst( $metal ),
-            'purity' => $purity
+            'purity' => $purity,
+            'currency_symbol' => $currency_symbol
         ) );
     }
 
@@ -193,13 +197,14 @@ class Gold_Price_Calculator {
         ), $atts );
 
         $spot_price = $this->get_spot_price();
+        $currency_symbol = gold_price_lived_get_currency_symbol();
 
         ob_start();
         ?>
         <div class="scrap-metal-calculator-wrapper">
             <?php if ( $atts['show_spot_price'] === 'yes' && $spot_price > 0 ) : ?>
             <div class="spot-price-display">
-                Gold Spot Price: <span class="spot-amount">$<?php echo number_format( $spot_price * 31.1035, 2 ); ?> CAD</span>
+                Gold Spot Price: <span class="spot-amount"><?php echo esc_html( $currency_symbol . ' ' . number_format( $spot_price * 31.1035, 2 ) ); ?></span>
                 <span class="spot-change">156.17</span>
             </div>
             <?php endif; ?>
@@ -247,7 +252,7 @@ class Gold_Price_Calculator {
                 <div id="calculator-result" class="calculator-result" style="display: none;">
                     <div class="result-content">
                         <span class="result-label">Estimated Value:</span>
-                        <span class="result-amount">$<span id="result-value">0.00</span></span>
+                        <span class="result-amount"><span id="result-value">0.00</span></span>
                     </div>
                 </div>
 

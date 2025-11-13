@@ -101,7 +101,8 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        showResult(response.data.total);
+                        var currencySymbol = response.data.currency_symbol || 'USD $';
+                        showResult(currencySymbol + ' ' + response.data.total);
                     } else {
                         showError(response.data.message || 'Calculation failed');
                     }

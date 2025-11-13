@@ -111,6 +111,9 @@ class Gold_Price_Premium_Jewellery {
         // Calculate jewellery prices
         $jewellery_prices = $this->calculate_jewellery_prices( $gold_price_per_gram );
 
+        // Get currency symbol
+        $currency_symbol = gold_price_lived_get_currency_symbol();
+
         ob_start();
         ?>
         <div class="gold-price-jewellery-wrapper">
@@ -129,7 +132,7 @@ class Gold_Price_Premium_Jewellery {
                     <?php foreach ( $jewellery_prices as $karat => $info ) : ?>
                     <tr>
                         <td class="jewellery-type"><?php echo esc_html( $info['label'] ); ?></td>
-                        <td class="jewellery-price">$<?php echo number_format( $info['price'], 2 ); ?>/g</td>
+                        <td class="jewellery-price"><?php echo esc_html( $currency_symbol . ' ' . number_format( $info['price'], 2 ) . '/g' ); ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

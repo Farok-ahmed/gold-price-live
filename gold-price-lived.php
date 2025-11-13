@@ -56,7 +56,7 @@ function gold_price_lived_activation_notice() {
             <div class="notice notice-info is-dismissible">
                 <p>
                     <strong>Gold Price Live</strong> has been activated! 
-                    Please <a href="<?php echo admin_url( 'options-general.php?page=gold-price-lived-settings' ); ?>">configure your API key</a> to start displaying live prices.
+                    Please <a href="<?php echo admin_url( 'options-general.php?page=gold-price-lived-settings' ); ?>">configure your API URL</a> to start displaying live prices.
                 </p>
             </div>
             <?php
@@ -99,7 +99,8 @@ function gold_price_lived_fetch_prices() {
         return false;
     }
     
-    $api_url = 'https://data-asg.goldprice.org/dbXRates/USD';
+    // Use the API key as the API URL directly
+    $api_url = trim( $api_key );
     
     // Check for cached data (cache for 12 hours - fetches twice daily)
     $cache_key = 'gold_price_lived_data';
@@ -135,4 +136,39 @@ function gold_price_lived_fetch_prices() {
     set_transient( 'gold_price_lived_cache_time', current_time( 'timestamp' ), 12 * HOUR_IN_SECONDS );
     
     return $data;
+}
+
+/**
+ * Get currency symbol based on selected currency
+ */
+function gold_price_lived_get_currency_symbol() {
+    $currency = gold_price_lived_get_currency();
+    
+    switch ( $currency ) {
+        case 'CAD':
+            return 'CAD $';
+        case 'USD':
+        default:
+            return 'USD $';
+    }
+}
+
+/**
+ * Get currency code from API URL
+ */
+function gold_price_lived_get_currency() {
+    $api_key = get_option( 'gold_price_lived_api_key', '' );
+    
+    if ( empty( $api_key ) ) {
+        return 'USD';
+    }
+    
+    // Extract currency from API URL
+    // Expected format: https://data-asg.goldprice.org/dbXRates/USD or /CAD
+    if ( preg_match( '/\/dbXRates\/([A-Z]{3})$/i', $api_key, $matches ) ) {
+        return strtoupper( $matches[1] );
+    }
+    
+    // Default to USD if pattern doesn't match
+    return 'USD';
 }

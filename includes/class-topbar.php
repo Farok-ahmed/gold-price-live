@@ -57,15 +57,18 @@ class Gold_Price_Topbar {
         if ( ! $data ) {
             $api_key = get_option( 'gold_price_lived_api_key', '' );
             if ( empty( $api_key ) ) {
-                return '<div class="gold-price-topbar error">Please configure your API key in <a href="' . admin_url( 'options-general.php?page=gold-price-lived-settings' ) . '" style="color: #fff; text-decoration: underline;">Settings</a></div>';
+                return '<div class="gold-price-topbar error">Please configure your API URL in <a href="' . admin_url( 'options-general.php?page=gold-price-lived-settings' ) . '" style="color: #fff; text-decoration: underline;">Settings</a></div>';
             }
-            return '<div class="gold-price-topbar error">Unable to fetch prices. Please check your API key.</div>';
+            return '<div class="gold-price-topbar error">Unable to fetch prices. Please check your API URL.</div>';
         }
         
         // Extract prices
         $gold_price = isset( $data['items'][0]['xauPrice'] ) ? number_format( $data['items'][0]['xauPrice'], 2 ) : 'N/A';
         $silver_price = isset( $data['items'][0]['xagPrice'] ) ? number_format( $data['items'][0]['xagPrice'], 2 ) : 'N/A';
         $platinum_price = isset( $data['items'][0]['xptPrice'] ) ? number_format( $data['items'][0]['xptPrice'], 2 ) : 'N/A';
+        
+        // Get currency symbol
+        $currency_symbol = gold_price_lived_get_currency_symbol();
         
         // Get timestamp
         $timestamp = isset( $data['ts'] ) ? $data['ts'] : time() * 1000;
@@ -78,15 +81,15 @@ class Gold_Price_Topbar {
             <div class="gold-price-container">
                 <div class="price-item gold">
                     <span class="metal-name">Gold</span>
-                    <span class="price">$<?php echo esc_html( $gold_price ); ?></span>
+                    <span class="price"><?php echo esc_html( $currency_symbol . ' ' . $gold_price ); ?></span>
                 </div>
                 <div class="price-item silver">
                     <span class="metal-name">Silver</span>
-                    <span class="price">$<?php echo esc_html( $silver_price ); ?></span>
+                    <span class="price"><?php echo esc_html( $currency_symbol . ' ' . $silver_price ); ?></span>
                 </div>
                 <div class="price-item platinum">
                     <span class="metal-name">Platinum</span>
-                    <span class="price">$<?php echo esc_html( $platinum_price ); ?></span>
+                    <span class="price"><?php echo esc_html( $currency_symbol . ' ' . $platinum_price ); ?></span>
                 </div>
                 <?php if ( $atts['show_date'] === 'yes' || $atts['show_time'] === 'yes' ) : ?>
                 <div class="price-date-time">

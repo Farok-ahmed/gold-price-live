@@ -67,7 +67,7 @@ class Gold_Price_Admin_Settings {
 
         add_settings_field(
             'gold_price_lived_api_key_field',
-            __( 'API Key', 'gold-price-lived' ),
+            __( 'API URL', 'gold-price-lived' ),
             array( $this, 'api_key_field_callback' ),
             'gold-price-lived-settings',
             'gold_price_lived_main_section'
@@ -78,15 +78,21 @@ class Gold_Price_Admin_Settings {
      * Main section callback
      */
     public function main_section_callback() {
-        echo '<p>' . __( 'Enter your Gold Price API key to enable live price data.', 'gold-price-lived' ) . '</p>';
+        echo '<p>' . __( 'Enter your Gold Price API URL. The currency will be automatically detected from the URL.', 'gold-price-lived' ) . '</p>';
     }
 
     /**
-     * API Key field callback
+     * API URL field callback
      */
     public function api_key_field_callback() {
         $api_key = get_option( 'gold_price_lived_api_key', '' );
         $has_key = ! empty( $api_key );
+        
+        // Detect currency from API URL
+        $detected_currency = 'Not detected';
+        if ( $has_key ) {
+            $detected_currency = gold_price_lived_get_currency();
+        }
         ?>
         <div style="position: relative; display: inline-block;">
             <input 
@@ -95,7 +101,7 @@ class Gold_Price_Admin_Settings {
                 name="gold_price_lived_api_key" 
                 value="<?php echo esc_attr( $api_key ); ?>" 
                 class="regular-text" 
-                placeholder="<?php esc_attr_e( 'Enter your API key', 'gold-price-lived' ); ?>"
+                placeholder="<?php esc_attr_e( 'https://data-asg.goldprice.org/dbXRates/USD', 'gold-price-lived' ); ?>"
                 autocomplete="off"
             />
             <button 
@@ -110,11 +116,15 @@ class Gold_Price_Admin_Settings {
         <?php if ( $has_key ) : ?>
         <p class="description" style="color: #46b450;">
             <span class="dashicons dashicons-yes-alt" style="vertical-align: middle;"></span>
-            <?php _e( 'API Key is configured (hidden for security)', 'gold-price-lived' ); ?>
+            <?php printf( __( 'API URL is configured. Detected Currency: <strong>%s</strong>', 'gold-price-lived' ), $detected_currency ); ?>
         </p>
         <?php endif; ?>
         <p class="description">
-            <?php _e( 'Get your API key from <a href="https://data-asg.goldprice.org" target="_blank">goldprice.org</a>', 'gold-price-lived' ); ?>
+            <?php _e( 'Enter the complete API URL from <a href="https://data-asg.goldprice.org" target="_blank">goldprice.org</a>', 'gold-price-lived' ); ?><br>
+            <?php _e( 'Examples:', 'gold-price-lived' ); ?><br>
+            • <?php _e( 'For USD: <code>https://data-asg.goldprice.org/dbXRates/USD</code>', 'gold-price-lived' ); ?><br>
+            • <?php _e( 'For CAD: <code>https://data-asg.goldprice.org/dbXRates/CAD</code>', 'gold-price-lived' ); ?><br>
+            <em><?php _e( 'Currency will be automatically detected from the URL', 'gold-price-lived' ); ?></em>
         </p>
         
         <script type="text/javascript">
@@ -160,7 +170,7 @@ class Gold_Price_Admin_Settings {
                 add_settings_error(
                     'gold_price_lived_messages',
                     'gold_price_lived_fetch_error',
-                    __( 'Failed to fetch data. Please check your API key.', 'gold-price-lived' ),
+                    __( 'Failed to fetch data. Please check your API URL.', 'gold-price-lived' ),
                     'error'
                 );
             }

@@ -149,6 +149,9 @@ class Gold_Price_Jewellery {
         $silver_items = $this->calculate_silver_prices( $silver_price_per_gram );
         $platinum_items = $this->calculate_platinum_prices( $platinum_price_per_gram );
 
+        // Get currency symbol
+        $currency_symbol = gold_price_lived_get_currency_symbol();
+
         ob_start();
         ?>
         <div class="gold-jewellery-wrapper">
@@ -170,7 +173,7 @@ class Gold_Price_Jewellery {
                             <?php foreach ( $gold_items as $item ) : ?>
                             <tr<?php echo isset( $item['is_special'] ) ? ' class="special-item"' : ''; ?>>
                                 <td class="item-name"><?php echo esc_html( $item['label'] ); ?></td>
-                                <td class="item-price">$<?php echo number_format( $item['price'], 2 ); ?>/g</td>
+                                <td class="item-price"><?php echo esc_html( $currency_symbol . ' ' . number_format( $item['price'], 2 ) . '/g' ); ?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -198,7 +201,7 @@ class Gold_Price_Jewellery {
                                 <?php foreach ( $silver_items as $item ) : ?>
                                 <tr>
                                     <td class="item-name"><?php echo esc_html( $item['label'] ); ?></td>
-                                    <td class="item-price">$<?php echo number_format( $item['price'], 2 ); ?>/g</td>
+                                    <td class="item-price"><?php echo esc_html( $currency_symbol . ' ' . number_format( $item['price'], 2 ) . '/g' ); ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -218,7 +221,7 @@ class Gold_Price_Jewellery {
                                 <?php foreach ( $platinum_items as $item ) : ?>
                                 <tr>
                                     <td class="item-name"><?php echo esc_html( $item['label'] ); ?></td>
-                                    <td class="item-price">$<?php echo number_format( $item['price'], 2 ); ?>/g</td>
+                                    <td class="item-price"><?php echo esc_html( $currency_symbol . ' ' . number_format( $item['price'], 2 ) . '/g' ); ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
