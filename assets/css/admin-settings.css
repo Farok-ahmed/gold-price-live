@@ -1,0 +1,357 @@
+/**
+ * Admin Settings Page Styles
+ * Modern design matching the provided mockup
+ */
+
+.gold-price-admin-wrap {
+    max-width: 1200px;
+    margin: 40px 0;
+}
+
+.gold-price-admin-wrap h1 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #1e3a5f;
+    margin-bottom: 40px;
+}
+
+/* Grid Layout */
+.gold-price-admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+@media (max-width: 1024px) {
+    .gold-price-admin-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Card Styling */
+.gold-price-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.gold-price-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.gold-price-card-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e3a5f;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gold-price-card-header .dashicons {
+    color: #6b7280;
+    font-size: 20px;
+}
+
+/* API Settings Card */
+.gold-price-api-input-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.gold-price-api-input {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.gold-price-api-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.gold-price-api-input::placeholder {
+    color: #9ca3af;
+}
+
+.gold-price-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #3b82f6;
+    transition: color 0.2s;
+}
+
+.gold-price-toggle-btn:hover {
+    color: #2563eb;
+}
+
+.gold-price-toggle-btn .dashicons {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+}
+
+/* Success Message */
+.gold-price-success-msg {
+    background: #d1fae5;
+    border: 1px solid #6ee7b7;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gold-price-success-msg .dashicons {
+    color: #059669;
+    flex-shrink: 0;
+}
+
+.gold-price-success-msg p {
+    margin: 0;
+    color: #065f46;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Provider Info */
+.gold-price-provider-info {
+    margin-top: 15px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.gold-price-provider-info strong {
+    color: #1e3a5f;
+}
+
+.gold-price-provider-info p {
+    margin: 5px 0;
+}
+
+/* Shortcodes List */
+.gold-price-shortcodes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.gold-price-shortcodes-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gold-price-shortcodes-list li:last-child {
+    border-bottom: none;
+}
+
+.gold-price-shortcodes-list code {
+    background: #f3f4f6;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    color: #1e3a5f;
+    font-weight: 500;
+}
+
+.gold-price-shortcodes-list .dashicons {
+    color: #3b82f6;
+    flex-shrink: 0;
+}
+
+/* Status Card */
+.gold-price-status-card {
+    background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+}
+
+.gold-price-status-success {
+    color: #059669;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gold-price-status-success .dashicons {
+    font-size: 24px;
+}
+
+.gold-price-status-info {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.gold-price-status-info strong {
+    color: #1e3a5f;
+}
+
+/* Fetch Now Button */
+.gold-price-fetch-btn {
+    width: 100%;
+    padding: 12px 20px;
+    background: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.gold-price-fetch-btn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.gold-price-fetch-btn .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* WordPress Admin Overrides */
+.gold-price-admin-wrap .notice {
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+.gold-price-admin-wrap .button-primary {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    padding: 10px 24px;
+    height: auto;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.gold-price-admin-wrap .button-primary:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* API Examples Section */
+.gold-price-api-examples {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fffbeb;
+    border-left: 4px solid #fbbf24;
+    border-radius: 6px;
+}
+
+.gold-price-api-examples h4 {
+    margin: 0 0 10px 0;
+    color: #92400e;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.gold-price-api-examples p {
+    margin: 8px 0;
+    font-size: 13px;
+    color: #78350f;
+}
+
+.gold-price-api-examples code {
+    background: #fef3c7;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #92400e;
+}
+
+/* Loading State */
+.gold-price-loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f4f6;
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    animation: gold-price-spin 0.8s linear infinite;
+}
+
+@keyframes gold-price-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error State */
+.gold-price-error {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #991b1b;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* Settings Form */
+.gold-price-admin-wrap .form-table {
+    margin-top: 0;
+}
+
+.gold-price-admin-wrap .form-table th {
+    padding: 20px 10px 20px 0;
+    font-weight: 600;
+    color: #1e3a5f;
+}
+
+.gold-price-admin-wrap .form-table td {
+    padding: 20px 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .gold-price-admin-wrap h1 {
+        font-size: 24px;
+    }
+    
+    .gold-price-card {
+        padding: 20px;
+    }
+    
+    .gold-price-admin-grid {
+        gap: 20px;
+    }
+}

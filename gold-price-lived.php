@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Gold Price Live
- * Plugin URI: https://example.com/gold-price-lived
- * Description: A plugin to display live gold prices
+ * Plugin URI: https://wordpress.org/plugins/gold-price-live/
+ * Description: A plugin to display live gold, silver, and platinum prices from multiple API providers (GoldPrice.org, MetalPriceAPI.com, Metals-API.com)
  * Version: 1.0.0
  * Author: Md Farok Ahmed
  * Author URI: https://farok.me
@@ -89,6 +89,104 @@ function gold_price_lived_init() {
 add_action( 'plugins_loaded', 'gold_price_lived_init' );
 
 /**
+ * Detect API provider from URL
+ * 
+ * Supported providers:
+ * - GoldPrice.org: https://data-asg.goldprice.org/dbXRates/USD
+ * - MetalPriceAPI.com: https://api.metalpriceapi.com/v1/latest?api_key=KEY&base=USD&currencies=XAG,XAU,XPT
+ * - Metals-API.com: https://metals-api.com/api/latest?access_key=KEY&base=USD&symbols=XAU,XAG,XPT
+ * 
+ * @param string $api_url The API URL to check
+ * @return string Provider identifier (goldprice|metalpriceapi|metals-api|unknown)
+ */
+function gold_price_lived_detect_api_provider( $api_url ) {
+    if ( strpos( $api_url, 'goldprice.org' ) !== false ) {
+        return 'goldprice';
+    } elseif ( strpos( $api_url, 'metalpriceapi.com' ) !== false ) {
+        return 'metalpriceapi';
+    } elseif ( strpos( $api_url, 'metals-api.com' ) !== false ) {
+        return 'metals-api';
+    }
+    return 'unknown';
+}
+
+/**
+ * Normalize API response to standard format
+ * 
+ * Different API providers return data in different formats.
+ * This function converts all formats to a standard structure.
+ * 
+ * Standard format:
+ * {
+ *   "items": [{"xauPrice": 2685.45, "xagPrice": 31.89, "xptPrice": 967.50}],
+ *   "ts": 1234567890000,
+ *   "provider": "goldprice"
+ * }
+ * 
+ * @param array $raw_data Raw API response data
+ * @param string $provider Provider identifier
+ * @return array Normalized data structure
+ */
+function gold_price_lived_normalize_response( $raw_data, $provider ) {
+    $normalized = array(
+        'items' => array(
+            array(
+                'xauPrice' => 0,  // Gold price per troy ounce
+                'xagPrice' => 0,  // Silver price per troy ounce
+                'xptPrice' => 0,  // Platinum price per troy ounce
+            )
+        ),
+        'ts' => time() * 1000,
+        'provider' => $provider
+    );
+
+    switch ( $provider ) {
+        case 'goldprice':
+            // Format: {"items":[{"xauPrice":2685.45,"xagPrice":31.89,"xptPrice":967.50}],"ts":1234567890}
+            if ( isset( $raw_data['items'][0] ) ) {
+                $normalized['items'][0]['xauPrice'] = isset( $raw_data['items'][0]['xauPrice'] ) ? floatval( $raw_data['items'][0]['xauPrice'] ) : 0;
+                $normalized['items'][0]['xagPrice'] = isset( $raw_data['items'][0]['xagPrice'] ) ? floatval( $raw_data['items'][0]['xagPrice'] ) : 0;
+                $normalized['items'][0]['xptPrice'] = isset( $raw_data['items'][0]['xptPrice'] ) ? floatval( $raw_data['items'][0]['xptPrice'] ) : 0;
+                $normalized['ts'] = isset( $raw_data['ts'] ) ? $raw_data['ts'] : time() * 1000;
+            }
+            break;
+
+        case 'metalpriceapi':
+            // Format: {"rates":{"XAU":0.000372,"XAG":0.03134,"XPT":0.001034},"base":"CAD"}
+            if ( isset( $raw_data['rates'] ) ) {
+                // Rates are inverse (currency per unit of metal), need to convert
+                if ( isset( $raw_data['rates']['XAU'] ) && $raw_data['rates']['XAU'] > 0 ) {
+                    $normalized['items'][0]['xauPrice'] = 1 / floatval( $raw_data['rates']['XAU'] );
+                }
+                if ( isset( $raw_data['rates']['XAG'] ) && $raw_data['rates']['XAG'] > 0 ) {
+                    $normalized['items'][0]['xagPrice'] = 1 / floatval( $raw_data['rates']['XAG'] );
+                }
+                if ( isset( $raw_data['rates']['XPT'] ) && $raw_data['rates']['XPT'] > 0 ) {
+                    $normalized['items'][0]['xptPrice'] = 1 / floatval( $raw_data['rates']['XPT'] );
+                }
+            }
+            break;
+
+        case 'metals-api':
+            // Format similar to metalpriceapi: {"rates":{"XAU":0.000372},"base":"USD"}
+            if ( isset( $raw_data['rates'] ) ) {
+                if ( isset( $raw_data['rates']['XAU'] ) && $raw_data['rates']['XAU'] > 0 ) {
+                    $normalized['items'][0]['xauPrice'] = 1 / floatval( $raw_data['rates']['XAU'] );
+                }
+                if ( isset( $raw_data['rates']['XAG'] ) && $raw_data['rates']['XAG'] > 0 ) {
+                    $normalized['items'][0]['xagPrice'] = 1 / floatval( $raw_data['rates']['XAG'] );
+                }
+                if ( isset( $raw_data['rates']['XPT'] ) && $raw_data['rates']['XPT'] > 0 ) {
+                    $normalized['items'][0]['xptPrice'] = 1 / floatval( $raw_data['rates']['XPT'] );
+                }
+            }
+            break;
+    }
+
+    return $normalized;
+}
+
+/**
  * Fetch gold prices from API
  */
 function gold_price_lived_fetch_prices() {
@@ -123,13 +221,17 @@ function gold_price_lived_fetch_prices() {
     }
     
     $body = wp_remote_retrieve_body( $response );
-    $data = json_decode( $body, true );
+    $raw_data = json_decode( $body, true );
     
-    if ( ! $data ) {
+    if ( ! $raw_data ) {
         return false;
     }
     
-    // Cache the data for 12 hours (twice daily updates)
+    // Detect API provider and normalize response
+    $provider = gold_price_lived_detect_api_provider( $api_url );
+    $data = gold_price_lived_normalize_response( $raw_data, $provider );
+    
+    // Cache the normalized data for 12 hours (twice daily updates)
     set_transient( $cache_key, $data, 12 * HOUR_IN_SECONDS );
     
     // Store cache timestamp
@@ -145,11 +247,26 @@ function gold_price_lived_get_currency_symbol() {
     $currency = gold_price_lived_get_currency();
     
     switch ( $currency ) {
+        case 'USD':
+            return 'USD $';
         case 'CAD':
             return 'CAD $';
-        case 'USD':
+        case 'EUR':
+            return 'EUR €';
+        case 'GBP':
+            return 'GBP £';
+        case 'AUD':
+            return 'AUD $';
+        case 'JPY':
+            return 'JPY ¥';
+        case 'CHF':
+            return 'CHF Fr';
+        case 'INR':
+            return 'INR ₹';
+        case 'CNY':
+            return 'CNY ¥';
         default:
-            return 'USD $';
+            return $currency . ' $';
     }
 }
 
@@ -163,9 +280,20 @@ function gold_price_lived_get_currency() {
         return 'USD';
     }
     
-    // Extract currency from API URL
-    // Expected format: https://data-asg.goldprice.org/dbXRates/USD or /CAD
+    // Try different API URL patterns
+    
+    // Pattern 1: GoldPrice.org format - https://data-asg.goldprice.org/dbXRates/USD
     if ( preg_match( '/\/dbXRates\/([A-Z]{3})$/i', $api_key, $matches ) ) {
+        return strtoupper( $matches[1] );
+    }
+    
+    // Pattern 2: MetalPriceAPI format - ?base=CAD or &base=USD
+    if ( preg_match( '/[?&]base=([A-Z]{3})/i', $api_key, $matches ) ) {
+        return strtoupper( $matches[1] );
+    }
+    
+    // Pattern 3: Metals-API format - similar to MetalPriceAPI
+    if ( preg_match( '/[?&]from=([A-Z]{3})/i', $api_key, $matches ) ) {
         return strtoupper( $matches[1] );
     }
     

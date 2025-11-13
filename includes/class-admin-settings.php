@@ -21,7 +21,25 @@ class Gold_Price_Admin_Settings {
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
         add_filter( 'plugin_action_links_' . plugin_basename( GOLD_PRICE_LIVED_PLUGIN_DIR . 'gold-price-lived.php' ), array( $this, 'add_settings_link' ) );
+    }
+
+    /**
+     * Enqueue admin styles
+     */
+    public function enqueue_admin_styles( $hook ) {
+        // Only load on our settings page
+        if ( 'settings_page_gold-price-lived-settings' !== $hook ) {
+            return;
+        }
+        
+        wp_enqueue_style( 
+            'gold-price-admin-settings', 
+            GOLD_PRICE_LIVED_PLUGIN_URL . 'assets/css/admin-settings.css',
+            array(),
+            '1.0.0'
+        );
     }
 
     /**
@@ -57,93 +75,6 @@ class Gold_Price_Admin_Settings {
                 'sanitize_callback' => 'sanitize_text_field'
             )
         );
-
-        add_settings_section(
-            'gold_price_lived_main_section',
-            __( 'API Configuration', 'gold-price-lived' ),
-            array( $this, 'main_section_callback' ),
-            'gold-price-lived-settings'
-        );
-
-        add_settings_field(
-            'gold_price_lived_api_key_field',
-            __( 'API URL', 'gold-price-lived' ),
-            array( $this, 'api_key_field_callback' ),
-            'gold-price-lived-settings',
-            'gold_price_lived_main_section'
-        );
-    }
-
-    /**
-     * Main section callback
-     */
-    public function main_section_callback() {
-        echo '<p>' . __( 'Enter your Gold Price API URL. The currency will be automatically detected from the URL.', 'gold-price-lived' ) . '</p>';
-    }
-
-    /**
-     * API URL field callback
-     */
-    public function api_key_field_callback() {
-        $api_key = get_option( 'gold_price_lived_api_key', '' );
-        $has_key = ! empty( $api_key );
-        
-        // Detect currency from API URL
-        $detected_currency = 'Not detected';
-        if ( $has_key ) {
-            $detected_currency = gold_price_lived_get_currency();
-        }
-        ?>
-        <div style="position: relative; display: inline-block;">
-            <input 
-                type="password" 
-                id="gold_price_api_key_input"
-                name="gold_price_lived_api_key" 
-                value="<?php echo esc_attr( $api_key ); ?>" 
-                class="regular-text" 
-                placeholder="<?php esc_attr_e( 'https://data-asg.goldprice.org/dbXRates/USD', 'gold-price-lived' ); ?>"
-                autocomplete="off"
-            />
-            <button 
-                type="button" 
-                id="toggle_api_key_visibility" 
-                class="button button-small"
-                style="margin-left: 5px; vertical-align: middle;"
-            >
-                <span class="dashicons dashicons-visibility" style="line-height: 1.4;"></span>
-            </button>
-        </div>
-        <?php if ( $has_key ) : ?>
-        <p class="description" style="color: #46b450;">
-            <span class="dashicons dashicons-yes-alt" style="vertical-align: middle;"></span>
-            <?php printf( __( 'API URL is configured. Detected Currency: <strong>%s</strong>', 'gold-price-lived' ), $detected_currency ); ?>
-        </p>
-        <?php endif; ?>
-        <p class="description">
-            <?php _e( 'Enter the complete API URL from <a href="https://data-asg.goldprice.org" target="_blank">goldprice.org</a>', 'gold-price-lived' ); ?><br>
-            <?php _e( 'Examples:', 'gold-price-lived' ); ?><br>
-            • <?php _e( 'For USD: <code>https://data-asg.goldprice.org/dbXRates/USD</code>', 'gold-price-lived' ); ?><br>
-            • <?php _e( 'For CAD: <code>https://data-asg.goldprice.org/dbXRates/CAD</code>', 'gold-price-lived' ); ?><br>
-            <em><?php _e( 'Currency will be automatically detected from the URL', 'gold-price-lived' ); ?></em>
-        </p>
-        
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            $('#toggle_api_key_visibility').on('click', function() {
-                var input = $('#gold_price_api_key_input');
-                var icon = $(this).find('.dashicons');
-                
-                if (input.attr('type') === 'password') {
-                    input.attr('type', 'text');
-                    icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
-                } else {
-                    input.attr('type', 'password');
-                    icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
-                }
-            });
-        });
-        </script>
-        <?php
     }
 
     /**
@@ -187,77 +118,196 @@ class Gold_Price_Admin_Settings {
         }
 
         settings_errors( 'gold_price_lived_messages' );
-        ?>
-        <div class="wrap">
-            <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+        
+        $api_key = get_option( 'gold_price_lived_api_key', '' );
+        $has_api = ! empty( $api_key );
+        
+        // Get detected info
+        $detected_currency = 'USD';
+        $detected_provider = 'Not configured';
+        if ( $has_api ) {
+            $detected_currency = gold_price_lived_get_currency();
+            $provider_code = gold_price_lived_detect_api_provider( $api_key );
             
-            <form method="post" action="options.php">
-                <?php
-                settings_fields( 'gold_price_lived_settings_group' );
-                do_settings_sections( 'gold-price-lived-settings' );
-                submit_button( __( 'Save Settings', 'gold-price-lived' ) );
-                ?>
-            </form>
-
-            <div style="margin-top: 30px; padding: 20px; background: #fff; border-left: 4px solid #2271b1;">
-                <h2><?php _e( 'Available Shortcodes', 'gold-price-lived' ); ?></h2>
-                <ul style="list-style: disc; margin-left: 20px;">
-                    <li><code>[gold_price_topbar]</code> - <?php _e( 'Horizontal price bar', 'gold-price-lived' ); ?></li>
-                    <li><code>[gold_price_table]</code> - <?php _e( 'Spot price table', 'gold-price-lived' ); ?></li>
-                    <li><code>[gold_price_premium_jewellery]</code> - <?php _e( 'Premium jewellery table', 'gold-price-lived' ); ?></li>
-                    <li><code>[gold_price_jewellery]</code> - <?php _e( 'Complete jewellery table', 'gold-price-lived' ); ?></li>
-                    <li><code>[gold_price_calculator]</code> - <?php _e( 'Scrap metal calculator', 'gold-price-lived' ); ?></li>
-                </ul>
-            </div>
-
-            <div style="margin-top: 20px; padding: 20px; background: #fff; border-left: 4px solid #46b450;">
-                <h2><?php _e( 'Current Status', 'gold-price-lived' ); ?></h2>
-                <?php
-                $api_key = get_option( 'gold_price_lived_api_key', '' );
-                if ( empty( $api_key ) ) {
-                    echo '<p style="color: #dc3232;"><strong>' . __( 'API Key not configured. Please add your API key above.', 'gold-price-lived' ) . '</strong></p>';
-                } else {
-                    echo '<p style="color: #46b450;"><strong>' . __( 'API Key configured successfully!', 'gold-price-lived' ) . '</strong></p>';
+            switch ( $provider_code ) {
+                case 'goldprice':
+                    $detected_provider = 'GoldPrice.org';
+                    break;
+                case 'metalpriceapi':
+                    $detected_provider = 'MetalPriceAPI.com';
+                    break;
+                case 'metals-api':
+                    $detected_provider = 'Metals-API.com';
+                    break;
+            }
+        }
+        
+        // Get cache status
+        $cached_data = get_transient( 'gold_price_lived_data' );
+        $cache_timestamp = get_transient( 'gold_price_lived_cache_time' );
+        $last_updated = '';
+        if ( $cache_timestamp ) {
+            $last_updated = human_time_diff( $cache_timestamp, current_time( 'timestamp' ) ) . ' ' . __( 'ago', 'gold-price-lived' );
+        }
+        ?>
+        <div class="wrap gold-price-admin-wrap">
+            <h1><?php _e( 'API Configuration', 'gold-price-lived' ); ?></h1>
+            
+            <div class="gold-price-admin-grid">
+                <!-- Left Column: API Settings -->
+                <div>
+                    <!-- API Settings Card -->
+                    <div class="gold-price-card">
+                        <div class="gold-price-card-header">
+                            <h2>
+                                <span class="dashicons dashicons-admin-settings"></span>
+                                <?php _e( 'API Settings', 'gold-price-lived' ); ?>
+                            </h2>
+                        </div>
+                        
+                        <form method="post" action="options.php">
+                            <?php settings_fields( 'gold_price_lived_settings_group' ); ?>
+                            
+                            <div class="gold-price-api-input-wrapper">
+                                <input 
+                                    type="password" 
+                                    id="gold_price_api_key_input"
+                                    name="gold_price_lived_api_key" 
+                                    value="<?php echo esc_attr( $api_key ); ?>" 
+                                    class="gold-price-api-input" 
+                                    placeholder="<?php esc_attr_e( 'Enter your metal price API URL...', 'gold-price-lived' ); ?>"
+                                    autocomplete="off"
+                                />
+                                <button 
+                                    type="button" 
+                                    id="toggle_api_key_visibility" 
+                                    class="gold-price-toggle-btn"
+                                    title="<?php esc_attr_e( 'Toggle visibility', 'gold-price-lived' ); ?>"
+                                >
+                                    <span class="dashicons dashicons-visibility"></span>
+                                </button>
+                            </div>
+                            
+                            <?php if ( $has_api ) : ?>
+                            <div class="gold-price-success-msg">
+                                <span class="dashicons dashicons-yes-alt"></span>
+                                <p><?php _e( 'API key configured successfully!', 'gold-price-lived' ); ?></p>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <div class="gold-price-provider-info">
+                                <p><strong><?php _e( 'Supported API Providers:', 'gold-price-lived' ); ?></strong></p>
+                                <p>• <?php _e( 'GoldPrice.org (free, no registration)', 'gold-price-lived' ); ?></p>
+                                <p>• <?php _e( 'MetalPriceAPI.com (API key required)', 'gold-price-lived' ); ?></p>
+                                <p>• <?php _e( 'Metals-API.com (API key required)', 'gold-price-lived' ); ?></p>
+                                <p style="margin-top: 10px;"><strong><?php _e( 'Currency Detection Details', 'gold-price-lived' ); ?></strong></p>
+                                <p><?php printf( __( 'Provider: <strong>%s</strong>', 'gold-price-lived' ), esc_html( $detected_provider ) ); ?></p>
+                                <p><?php printf( __( 'Currency: <strong>%s</strong>', 'gold-price-lived' ), esc_html( $detected_currency ) ); ?></p>
+                            </div>
+                            
+                            <?php submit_button( __( 'Save Settings', 'gold-price-lived' ), 'primary', 'submit', false ); ?>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Shortcodes & Status -->
+                <div>
+                    <!-- Available Shortcodes Card -->
+                    <div class="gold-price-card">
+                        <div class="gold-price-card-header">
+                            <h2>
+                                <span class="dashicons dashicons-shortcode"></span>
+                                <?php _e( 'Available Shortcodes', 'gold-price-lived' ); ?>
+                            </h2>
+                        </div>
+                        
+                        <ul class="gold-price-shortcodes-list">
+                            <li>
+                                <span class="dashicons dashicons-arrow-right-alt2"></span>
+                                <code>[gold_price_topbar]</code>
+                            </li>
+                            <li>
+                                <span class="dashicons dashicons-arrow-right-alt2"></span>
+                                <code>[gold_price_table]</code>
+                            </li>
+                            <li>
+                                <span class="dashicons dashicons-arrow-right-alt2"></span>
+                                <code>[gold_price_premium_jewellery]</code>
+                            </li>
+                            <li>
+                                <span class="dashicons dashicons-arrow-right-alt2"></span>
+                                <code>[gold_price_jewellery]</code>
+                            </li>
+                            <li>
+                                <span class="dashicons dashicons-arrow-right-alt2"></span>
+                                <code>[gold_price_calculator]</code>
+                            </li>
+                        </ul>
+                    </div>
                     
-                    // Check cache status
-                    $cached_data = get_transient( 'gold_price_lived_data' );
-                    $cache_timestamp = get_transient( 'gold_price_lived_cache_time' );
-                    
-                    if ( $cached_data && $cache_timestamp ) {
-                        $last_updated = human_time_diff( $cache_timestamp, current_time( 'timestamp' ) );
-                        echo '<p>' . __( 'Last Updated:', 'gold-price-lived' ) . ' <strong>' . $last_updated . ' ago</strong></p>';
-                        echo '<p>' . __( 'Next Update:', 'gold-price-lived' ) . ' <strong>' . __( 'Automatic (twice daily)', 'gold-price-lived' ) . '</strong></p>';
-                    }
-                    
-                    // Test API connection
-                    $test_data = gold_price_lived_fetch_prices();
-                    if ( $test_data ) {
-                        echo '<p style="color: #46b450;">' . __( 'API Connection: Working', 'gold-price-lived' ) . '</p>';
-                        if ( isset( $test_data['items'][0]['xauPrice'] ) ) {
-                            $gold_price = number_format( $test_data['items'][0]['xauPrice'], 2 );
-                            echo '<p>' . __( 'Current Gold Price:', 'gold-price-lived' ) . ' <strong>$' . $gold_price . ' USD/oz</strong></p>';
-                        }
-                    } else {
-                        echo '<p style="color: #dc3232;">' . __( 'API Connection: Failed. Please check your API key.', 'gold-price-lived' ) . '</p>';
-                    }
-                    
-                    // Fetch Now button
-                    ?>
-                    <form method="post" style="margin-top: 20px;">
-                        <?php wp_nonce_field( 'gold_price_fetch_now', 'fetch_nonce' ); ?>
-                        <button type="submit" name="fetch_now" class="button button-secondary">
-                            <span class="dashicons dashicons-update" style="vertical-align: middle;"></span>
-                            <?php _e( 'Fetch Now', 'gold-price-lived' ); ?>
-                        </button>
-                        <p class="description">
-                            <?php _e( 'Click to fetch fresh data immediately and clear the cache.', 'gold-price-lived' ); ?>
-                        </p>
-                    </form>
-                    <?php
-                }
-                ?>
+                    <!-- Current Status Card -->
+                    <div class="gold-price-card gold-price-status-card" style="margin-top: 30px;">
+                        <div class="gold-price-card-header">
+                            <h2>
+                                <span class="dashicons dashicons-shortcode"></span>
+                                <?php _e( 'Current Status', 'gold-price-lived' ); ?>
+                            </h2>
+                        </div>
+                        
+                        <?php if ( $has_api ) : ?>
+                            <div class="gold-price-status-success">
+                                <span class="dashicons dashicons-yes-alt"></span>
+                                <?php _e( 'API key configured successfully!', 'gold-price-lived' ); ?>
+                            </div>
+                            
+                            <?php if ( $last_updated ) : ?>
+                            <div class="gold-price-status-info">
+                                <?php printf( __( 'Last Updated: <strong>%s</strong>', 'gold-price-lived' ), esc_html( $last_updated ) ); ?>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <div class="gold-price-status-info">
+                                <?php _e( 'Next Update: <strong>Automatic (twice daily)</strong>', 'gold-price-lived' ); ?>
+                            </div>
+                            
+                            <div class="gold-price-status-info">
+                                <?php _e( 'API Connection: <strong>Working</strong>', 'gold-price-lived' ); ?>
+                            </div>
+                            
+                            <!-- Fetch Now Button -->
+                            <form method="post">
+                                <?php wp_nonce_field( 'gold_price_fetch_now', 'fetch_nonce' ); ?>
+                                <button type="submit" name="fetch_now" class="gold-price-fetch-btn">
+                                    <span class="dashicons dashicons-update"></span>
+                                    <?php _e( 'Fetch Now', 'gold-price-lived' ); ?>
+                                </button>
+                            </form>
+                        <?php else : ?>
+                            <div class="gold-price-error">
+                                <?php _e( 'API key not configured. Please add your API URL in the settings.', 'gold-price-lived' ); ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         </div>
+        
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('#toggle_api_key_visibility').on('click', function() {
+                var input = $('#gold_price_api_key_input');
+                var icon = $(this).find('.dashicons');
+                
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+                }
+            });
+        });
+        </script>
         <?php
     }
 }
